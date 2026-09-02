@@ -16,6 +16,218 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* =========================================
+       CINEMATIC INTRO
+       ========================================= */
+
+    body.intro-active {
+      overflow: hidden;
+    }
+
+    .intro-screen {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 99999;
+      overflow: hidden;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      opacity: 1;
+      visibility: visible;
+
+      transition:
+        opacity 0.9s ease,
+        visibility 0.9s ease;
+    }
+
+    .intro-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .intro-video {
+      position: absolute;
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      background: #000;
+    }
+
+
+    /* =========================================
+       FLASH
+       ========================================= */
+
+    .light-flash {
+      position: absolute;
+      inset: 0;
+
+      background: #fff;
+
+      opacity: 0;
+
+      pointer-events: none;
+
+      z-index: 10;
+    }
+
+    .light-flash.fire {
+      animation: lightningFlash 0.7s ease-out forwards;
+    }
+
+    @keyframes lightningFlash {
+
+      0% {
+        opacity: 0;
+      }
+
+      12% {
+        opacity: 1;
+      }
+
+      25% {
+        opacity: 0.15;
+      }
+
+      40% {
+        opacity: 1;
+      }
+
+      60% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 0;
+      }
+
+    }
+
+
+    /* =========================================
+       LOGO REVEAL
+       ========================================= */
+
+    .logo-reveal {
+      position: absolute;
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 20;
+
+      opacity: 0;
+      visibility: hidden;
+
+      transform: scale(0.65);
+
+      transition:
+        opacity 0.7s ease,
+        transform 1.3s cubic-bezier(.16, 1, .3, 1),
+        visibility 0.7s ease;
+    }
+
+    .logo-reveal.show {
+      opacity: 1;
+      visibility: visible;
+
+      transform: scale(1);
+    }
+
+    .logo-reveal img {
+      width: min(65vw, 520px);
+
+      max-width: 80%;
+      height: auto;
+
+      filter:
+        drop-shadow(0 0 15px rgba(0, 255, 120, 0.8))
+        drop-shadow(0 0 40px rgba(0, 255, 120, 0.5))
+        drop-shadow(0 0 80px rgba(0, 255, 120, 0.3));
+    }
+
+
+    /* =========================================
+       SKIP BUTTON
+       ========================================= */
+
+    .skip-intro {
+      position: absolute;
+
+      right: 25px;
+      bottom: 25px;
+
+      z-index: 30;
+
+      padding: 10px 18px;
+
+      background: rgba(0, 0, 0, 0.55);
+
+      color: #fff;
+
+      border: 1px solid rgba(255, 255, 255, 0.35);
+
+      border-radius: 5px;
+
+      font-size: 12px;
+
+      letter-spacing: 2px;
+
+      cursor: pointer;
+
+      backdrop-filter: blur(8px);
+
+      transition: 0.3s ease;
+    }
+
+    .skip-intro:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #fff;
+    }
+
+
+    /* =========================================
+       MOBILE PORTRAIT
+       ========================================= */
+
+    @media (max-width: 768px) {
+
+      .intro-video {
+        object-fit: cover;
+      }
+
+      .logo-reveal img {
+        width: 75vw;
+        max-width: 85%;
+      }
+
+      .skip-intro {
+        right: 15px;
+        bottom: 15px;
+
+        padding: 9px 14px;
+
+        font-size: 10px;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 
@@ -24,10 +236,12 @@
 
   <!-- =====================================================
        CINEMATIC INTRO
-       VIDEO → LIGHT FLASH → LOGO → WEBSITE
+       DESKTOP → intro.mp4
+       MOBILE → intro-mobile.mp4
   ====================================================== -->
 
   <div id="introScreen" class="intro-screen">
+
 
     <video
       id="introVideo"
@@ -37,25 +251,53 @@
       playsinline
       preload="auto"
     >
-      <source src="intro.mp4" type="video/mp4">
+
+      <!-- DESKTOP / LAPTOP VIDEO -->
+      <source
+        src="intro.mp4"
+        type="video/mp4"
+        media="(min-width: 769px)"
+      >
+
+      <!-- MOBILE PORTRAIT VIDEO -->
+      <source
+        src="intro-mobile.mp4"
+        type="video/mp4"
+        media="(max-width: 768px)"
+      >
+
     </video>
 
 
     <!-- Final Lightning / White Flash -->
-    <div id="lightFlash" class="light-flash"></div>
+
+    <div
+      id="lightFlash"
+      class="light-flash"
+    ></div>
 
 
     <!-- AIERA'26 Logo Reveal -->
-    <div id="logoReveal" class="logo-reveal">
+
+    <div
+      id="logoReveal"
+      class="logo-reveal"
+    >
+
       <img
         src="aiera26-logo-transparent.png"
         alt="AIERA'26"
       />
+
     </div>
 
 
     <!-- Skip -->
-    <button id="skipIntro" class="skip-intro">
+
+    <button
+      id="skipIntro"
+      class="skip-intro"
+    >
       SKIP INTRO ↗
     </button>
 
@@ -63,8 +305,12 @@
 
 
 
-  <!-- Background Effects -->
+  <!-- =====================================================
+       BACKGROUND EFFECTS
+  ====================================================== -->
+
   <div class="scanlines"></div>
+
   <div class="noise"></div>
 
 
@@ -76,16 +322,25 @@
   <header class="topbar">
 
     <div class="status">
+
       <span class="dot"></span>
+
       SYSTEM ONLINE
+
     </div>
+
 
     <div class="top-title">
+
       MANGAYARKARASI COLLEGE OF ENGINEERING
+
     </div>
 
+
     <div class="status">
+
       AIERA'26
+
     </div>
 
   </header>
@@ -101,26 +356,38 @@
 
     <section class="hero">
 
+
       <div class="warning-line">
+
         <span>///</span>
+
         INCOMING TRANSMISSION
+
         <span>///</span>
+
       </div>
 
 
       <p class="college">
+
         MANGAYARKARASI COLLEGE OF ENGINEERING
+
       </p>
 
 
       <p class="dept">
+
         DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING
+
         <b>(AI&amp;ML)</b>
+
       </p>
 
 
       <p class="presents">
+
         PRESENTS
+
       </p>
 
 
@@ -129,6 +396,7 @@
       <div class="logo-wrap">
 
         <div class="glow"></div>
+
 
         <img
           src="aiera26-logo-transparent.png"
@@ -140,11 +408,13 @@
 
 
       <p class="tagline">
+
         THE NEXT ERA OF ARTIFICIAL INTELLIGENCE
+
       </p>
 
 
-      <!-- Registration -->
+      <!-- REGISTRATION -->
 
       <a
         class="primary-btn"
@@ -152,14 +422,20 @@
         target="_blank"
         rel="noopener"
       >
+
         <span>REGISTER NOW</span>
+
         <i>↗</i>
+
       </a>
 
 
       <div class="scroll-hint">
+
         SCROLL TO ACCESS
+
         <span>↓</span>
+
       </div>
 
     </section>
@@ -172,13 +448,18 @@
 
     <section class="section countdown-section">
 
+
       <div class="section-label">
+
         01 / COUNTDOWN
+
       </div>
 
 
       <h2>
+
         THE EVENT BEGINS IN
+
       </h2>
 
 
@@ -187,9 +468,17 @@
         id="countdown"
       >
 
+
         <div class="time-box">
-          <strong id="days">00</strong>
-          <small>DAYS</small>
+
+          <strong id="days">
+            00
+          </strong>
+
+          <small>
+            DAYS
+          </small>
+
         </div>
 
 
@@ -199,8 +488,15 @@
 
 
         <div class="time-box">
-          <strong id="hours">00</strong>
-          <small>HOURS</small>
+
+          <strong id="hours">
+            00
+          </strong>
+
+          <small>
+            HOURS
+          </small>
+
         </div>
 
 
@@ -210,8 +506,15 @@
 
 
         <div class="time-box">
-          <strong id="minutes">00</strong>
-          <small>MINUTES</small>
+
+          <strong id="minutes">
+            00
+          </strong>
+
+          <small>
+            MINUTES
+          </small>
+
         </div>
 
 
@@ -221,8 +524,15 @@
 
 
         <div class="time-box">
-          <strong id="seconds">00</strong>
-          <small>SECONDS</small>
+
+          <strong id="seconds">
+            00
+          </strong>
+
+          <small>
+            SECONDS
+          </small>
+
         </div>
 
       </div>
@@ -237,21 +547,30 @@
 
     <section class="section">
 
+
       <div class="section-label">
+
         02 / EVENT DETAILS
+
       </div>
 
 
       <div class="section-head">
 
+
         <div>
 
           <h2>
+
             AIERA'26
+
           </h2>
 
+
           <p class="muted">
+
             A technical symposium presented by CSE (AI&amp;ML).
+
           </p>
 
         </div>
@@ -259,15 +578,30 @@
 
         <div class="event-meta">
 
+
           <div>
-            <span>DATE</span>
-            <b>DD / MM / 2026</b>
+
+            <span>
+              DATE
+            </span>
+
+            <b>
+              DD / MM / 2026
+            </b>
+
           </div>
 
 
           <div>
-            <span>VENUE</span>
-            <b>MCE CAMPUS</b>
+
+            <span>
+              VENUE
+            </span>
+
+            <b>
+              MCE CAMPUS
+            </b>
+
           </div>
 
         </div>
@@ -276,7 +610,7 @@
 
 
 
-      <!-- Event Cards -->
+      <!-- EVENT CARDS -->
 
       <div class="event-grid">
 
@@ -287,13 +621,16 @@
             01
           </span>
 
+
           <h3>
             EVENT ONE
           </h3>
 
+
           <p>
             Add your first technical / non-technical event details here.
           </p>
+
 
           <a href="YOUR_EVENT_LINK_HERE">
             ACCESS EVENT ↗
@@ -309,13 +646,16 @@
             02
           </span>
 
+
           <h3>
             EVENT TWO
           </h3>
 
+
           <p>
             Add your second event details here.
           </p>
+
 
           <a href="YOUR_EVENT_LINK_HERE">
             ACCESS EVENT ↗
@@ -331,13 +671,16 @@
             03
           </span>
 
+
           <h3>
             EVENT THREE
           </h3>
 
+
           <p>
             Add your third event details here.
           </p>
+
 
           <a href="YOUR_EVENT_LINK_HERE">
             ACCESS EVENT ↗
@@ -353,13 +696,16 @@
             04
           </span>
 
+
           <h3>
             EVENT FOUR
           </h3>
 
+
           <p>
             Add your fourth event details here.
           </p>
+
 
           <a href="YOUR_EVENT_LINK_HERE">
             ACCESS EVENT ↗
@@ -379,18 +725,27 @@
 
     <section class="register-panel">
 
+
       <div>
 
         <div class="section-label">
+
           03 / ACCESS
+
         </div>
 
+
         <h2>
+
           SECURE YOUR ENTRY
+
         </h2>
 
+
         <p>
+
           Registration is open. Reserve your place at AIERA'26.
+
         </p>
 
       </div>
@@ -402,8 +757,11 @@
         target="_blank"
         rel="noopener"
       >
+
         REGISTER
+
         <i>↗</i>
+
       </a>
 
     </section>
@@ -416,13 +774,18 @@
 
     <section class="section">
 
+
       <div class="section-label">
+
         04 / SYMPOSIUM COORDINATORS
+
       </div>
 
 
       <h2>
+
         COMMAND TEAM
+
       </h2>
 
 
@@ -430,9 +793,10 @@
       <div class="coordinator-grid">
 
 
-        <!-- Coordinator 01 -->
+        <!-- COORDINATOR 01 -->
 
         <article class="person-card">
+
 
           <div class="avatar">
             01
@@ -445,13 +809,16 @@
               COORDINATOR
             </span>
 
+
             <h3>
               NAME HERE
             </h3>
 
+
             <p>
               Student Coordinator
             </p>
+
 
             <a href="tel:+910000000000">
               +91 XXXXX XXXXX
@@ -463,9 +830,10 @@
 
 
 
-        <!-- Coordinator 02 -->
+        <!-- COORDINATOR 02 -->
 
         <article class="person-card">
+
 
           <div class="avatar">
             02
@@ -478,13 +846,16 @@
               COORDINATOR
             </span>
 
+
             <h3>
               NAME HERE
             </h3>
 
+
             <p>
               Student Coordinator
             </p>
+
 
             <a href="tel:+910000000000">
               +91 XXXXX XXXXX
@@ -496,9 +867,10 @@
 
 
 
-        <!-- Coordinator 03 -->
+        <!-- COORDINATOR 03 -->
 
         <article class="person-card">
+
 
           <div class="avatar">
             03
@@ -511,13 +883,16 @@
               COORDINATOR
             </span>
 
+
             <h3>
               NAME HERE
             </h3>
 
+
             <p>
               Student Coordinator
             </p>
+
 
             <a href="tel:+910000000000">
               +91 XXXXX XXXXX
@@ -539,6 +914,7 @@
 
     <footer>
 
+
       <img
         src="aiera26-logo-transparent.png"
         alt="AIERA'26"
@@ -546,14 +922,20 @@
 
 
       <p>
+
         MANGAYARKARASI COLLEGE OF ENGINEERING
+
         ·
+
         CSE (AI&amp;ML)
+
       </p>
 
 
       <p class="copyright">
+
         © 2026 AIERA'26. ALL SYSTEMS RESERVED.
+
       </p>
 
     </footer>
@@ -564,56 +946,56 @@
 
 
   <!-- =====================================================
-       CINEMATIC INTRO + COUNTDOWN JAVASCRIPT
+       JAVASCRIPT
   ====================================================== -->
 
   <script>
 
-    /*
-    ========================================================
-    CINEMATIC INTRO
-    VIDEO
-      ↓
-    FINAL FRAME / LIGHTNING
-      ↓
-    WHITE FLASH
-      ↓
-    AIERA'26 LOGO
-      ↓
-    WEBSITE
-    ========================================================
-    */
+
+    /* =====================================================
+       CINEMATIC INTRO
+       
+       DESKTOP:
+       intro.mp4
+
+       MOBILE:
+       intro-mobile.mp4
+
+       BOTH:
+       FULL VIDEO → ENDED → FLASH → LOGO → WEBSITE
+    ====================================================== */
 
 
     const introScreen =
       document.getElementById("introScreen");
 
+
     const video =
       document.getElementById("introVideo");
+
 
     const flash =
       document.getElementById("lightFlash");
 
+
     const logo =
       document.getElementById("logoReveal");
+
 
     const skip =
       document.getElementById("skipIntro");
 
 
     let introFinished = false;
-    let fallbackTimer = null;
-    let pollTimer = null;
 
 
 
-    /*
-    --------------------------------------------------------
-    START LOGO REVEAL
-    --------------------------------------------------------
-    */
+    /* =====================================================
+       START LOGO REVEAL
+    ====================================================== */
 
     function startLogoReveal() {
+
 
       if (introFinished) {
         return;
@@ -624,40 +1006,46 @@
 
 
       /*
-      Stop video
+        Video has FULLY ENDED here.
       */
 
       try {
+
         video.pause();
-      } catch (error) {
-        console.log(error);
-      }
+
+      } catch (error) {}
+
 
 
       /*
-      Final video fade
+        Fade final video frame
       */
 
       video.style.transition =
         "opacity 0.18s ease";
 
+
       video.style.opacity =
         "0";
 
 
+
       /*
-      Lightning / white flash
+        LIGHTNING / WHITE FLASH
       */
 
       flash.classList.remove("fire");
 
+
       void flash.offsetWidth;
+
 
       flash.classList.add("fire");
 
 
+
       /*
-      Logo appears immediately after flash
+        AIERA'26 LOGO
       */
 
       setTimeout(function () {
@@ -667,9 +1055,9 @@
       }, 100);
 
 
+
       /*
-      Hold logo for a moment
-      then reveal website
+        ENTER WEBSITE
       */
 
       setTimeout(function () {
@@ -682,13 +1070,63 @@
 
 
 
-    /*
-    --------------------------------------------------------
-    FINISH INTRO
-    --------------------------------------------------------
-    */
+    /* =====================================================
+       VERY IMPORTANT
+
+       NO timeupdate
+       NO 0.2 sec early trigger
+       NO 0.01 sec trigger
+
+       ONLY "ended"
+    ====================================================== */
+
+    video.addEventListener(
+      "ended",
+      function () {
+
+        startLogoReveal();
+
+      }
+    );
+
+
+
+    /* =====================================================
+       START VIDEO
+    ====================================================== */
+
+    function startVideo() {
+
+
+      video.play().catch(function () {
+
+
+        /*
+          Browser autoplay retry
+        */
+
+        setTimeout(function () {
+
+          video.play().catch(function () {});
+
+        }, 300);
+
+
+      });
+
+    }
+
+
+    startVideo();
+
+
+
+    /* =====================================================
+       FINISH INTRO
+    ====================================================== */
 
     function finishIntro() {
+
 
       if (!introScreen) {
         return;
@@ -703,15 +1141,15 @@
       );
 
 
-      /*
-      Completely remove intro
-      */
-
       setTimeout(function () {
 
+
         if (introScreen) {
+
           introScreen.remove();
+
         }
+
 
       }, 900);
 
@@ -719,197 +1157,14 @@
 
 
 
-    /*
-    --------------------------------------------------------
-    VIDEO ENDED
-    --------------------------------------------------------
-    */
-
-    video.addEventListener(
-      "ended",
-      function () {
-
-        startLogoReveal();
-
-      }
-    );
-
-
-
-    /*
-    --------------------------------------------------------
-    TIME UPDATE
-    Detect final part of video
-    --------------------------------------------------------
-    */
-
-    video.addEventListener(
-      "timeupdate",
-      function () {
-
-        if (
-          !introFinished &&
-          video.duration &&
-          isFinite(video.duration)
-        ) {
-
-          const remaining =
-            video.duration - video.currentTime;
-
-
-          if (remaining <= 0.25) {
-
-            startLogoReveal();
-
-          }
-
-        }
-
-      }
-    );
-
-
-
-    /*
-    --------------------------------------------------------
-    HARD FALLBACK POLLING
-    Prevent last-frame freeze
-    --------------------------------------------------------
-    */
-
-    pollTimer =
-      setInterval(function () {
-
-        if (
-          !introFinished &&
-          video.duration &&
-          isFinite(video.duration)
-        ) {
-
-          const remaining =
-            video.duration - video.currentTime;
-
-
-          if (remaining <= 0.15) {
-
-            clearInterval(pollTimer);
-
-            startLogoReveal();
-
-          }
-
-        }
-
-      }, 50);
-
-
-
-    /*
-    --------------------------------------------------------
-    VIDEO METADATA
-    Backup timer
-    --------------------------------------------------------
-    */
-
-    video.addEventListener(
-      "loadedmetadata",
-      function () {
-
-        if (
-          video.duration &&
-          isFinite(video.duration)
-        ) {
-
-          clearTimeout(fallbackTimer);
-
-
-          fallbackTimer =
-            setTimeout(function () {
-
-              if (!introFinished) {
-
-                startLogoReveal();
-
-              }
-
-            },
-            Math.max(
-              500,
-              (video.duration * 1000) + 300
-            ));
-
-        }
-
-      }
-    );
-
-
-
-    /*
-    --------------------------------------------------------
-    VIDEO ERROR
-    If video cannot load, don't leave screen stuck
-    --------------------------------------------------------
-    */
-
-    video.addEventListener(
-      "error",
-      function () {
-
-        setTimeout(function () {
-
-          if (!introFinished) {
-
-            startLogoReveal();
-
-          }
-
-        }, 500);
-
-      }
-    );
-
-
-
-    /*
-    --------------------------------------------------------
-    AUTOPLAY
-    --------------------------------------------------------
-    */
-
-    function startVideo() {
-
-      video.play().catch(function () {
-
-        /*
-        Browser blocked autoplay.
-        Try once more after a short delay.
-        */
-
-        setTimeout(function () {
-
-          video.play().catch(function () {});
-
-        }, 300);
-
-      });
-
-    }
-
-
-    startVideo();
-
-
-
-    /*
-    --------------------------------------------------------
-    SKIP INTRO
-    --------------------------------------------------------
-    */
+    /* =====================================================
+       SKIP INTRO
+    ====================================================== */
 
     skip.addEventListener(
       "click",
       function () {
+
 
         if (introFinished) {
           return;
@@ -919,18 +1174,17 @@
         introFinished = true;
 
 
-        clearTimeout(fallbackTimer);
-        clearInterval(pollTimer);
-
-
         try {
+
           video.pause();
-        } catch (error) {
-          console.log(error);
-        }
+
+        } catch (error) {}
 
 
-        introScreen.classList.add("hide");
+
+        introScreen.classList.add(
+          "hide"
+        );
 
 
         document.body.classList.remove(
@@ -940,7 +1194,13 @@
 
         setTimeout(function () {
 
-          introScreen.remove();
+
+          if (introScreen) {
+
+            introScreen.remove();
+
+          }
+
 
         }, 900);
 
@@ -949,14 +1209,12 @@
 
 
 
-    /*
-    ========================================================
-    COUNTDOWN
-    ========================================================
-    */
+    /* =====================================================
+       COUNTDOWN
+    ====================================================== */
 
     /*
-    CHANGE THIS DATE
+      CHANGE EVENT DATE HERE
     */
 
     const eventDate =
@@ -968,6 +1226,7 @@
 
     function updateCountdown() {
 
+
       const now =
         new Date().getTime();
 
@@ -976,35 +1235,42 @@
         eventDate - now;
 
 
+
       /*
-      Event started
+        EVENT STARTED
       */
 
       if (distance <= 0) {
+
 
         document.getElementById(
           "days"
         ).textContent = "00";
 
+
         document.getElementById(
           "hours"
         ).textContent = "00";
+
 
         document.getElementById(
           "minutes"
         ).textContent = "00";
 
+
         document.getElementById(
           "seconds"
         ).textContent = "00";
+
 
         return;
 
       }
 
 
+
       /*
-      Calculate time
+        CALCULATE
       */
 
       const days =
@@ -1038,8 +1304,9 @@
         );
 
 
+
       /*
-      Display
+        DISPLAY
       */
 
       document.getElementById(
@@ -1069,11 +1336,8 @@
 
 
 
-    /*
-    Start countdown
-    */
-
     updateCountdown();
+
 
     setInterval(
       updateCountdown,
@@ -1085,4 +1349,5 @@
 
 
 </body>
+
 </html>
